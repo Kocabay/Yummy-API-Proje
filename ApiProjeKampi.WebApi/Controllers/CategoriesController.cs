@@ -1,5 +1,7 @@
 ﻿using ApiProjeKampi.WebApi.Context;
+using ApiProjeKampi.WebApi.Dtos.CategoryDtos;
 using ApiProjeKampi.WebApi.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiProjeKampi.WebApi.Controllers
@@ -9,9 +11,11 @@ namespace ApiProjeKampi.WebApi.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ApiContext _context;
-        public CategoriesController(ApiContext context)
+        private readonly IMapper _mapper;
+        public CategoriesController(ApiContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -21,13 +25,15 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok(values);
         }
 
-
         [HttpPost]
-        public IActionResult CreateCategory(Category category)
+        public IActionResult CreateCategory(CreateCategoryDto createCategoryDto)
         {
-            _context.Categories.Add(category);
+            //_context.Categories.Add(category);
+            //_context.SaveChanges();
+            var value = _mapper.Map<Category>(createCategoryDto);
+            _context.Categories.Add(value);
             _context.SaveChanges();
-            return Ok("Kategori ekleme işlemi başarılı.");
+            return Ok("Kategori ekleme işlemi başarılı");
         }
 
         [HttpDelete]
@@ -36,7 +42,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             var value = _context.Categories.Find(id);
             _context.Categories.Remove(value);
             _context.SaveChanges();
-            return Ok("Kategori silme işlemi başarılı.");
+            return Ok("Kategori silme işlemi başarılı");
         }
 
         [HttpGet("GetCategory")]
@@ -47,9 +53,10 @@ namespace ApiProjeKampi.WebApi.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateCategory(Category category)
+        public IActionResult UpdateCategory(UpdateCategoryDto updateCategoryDto)
         {
-            _context.Categories.Update(category);
+            var value = _mapper.Map<Category>(updateCategoryDto);
+            _context.Categories.Update(value);
             _context.SaveChanges();
             return Ok("Kategori güncelleme işlemi başarılı");
         }
