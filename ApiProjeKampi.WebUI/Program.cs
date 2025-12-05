@@ -24,6 +24,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Category}/{action=CategoryList}/{id?}");
+    pattern: "{controller=Message}/{action=MessageList}/{id?}");
 
 app.Run();
