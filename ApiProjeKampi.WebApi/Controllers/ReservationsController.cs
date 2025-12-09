@@ -18,6 +18,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             _mapper = mapper;
         }
 
+        // Tüm rezervasyonları listeler
         [HttpGet]
         public IActionResult ReservationList()
         {
@@ -25,6 +26,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok(values);
         }
 
+        // Yeni rezervasyon oluşturur
         [HttpPost]
         public IActionResult CreateReservation(CreateReservationDto createReservationDto)
         {
@@ -34,6 +36,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok("Kategori ekleme işlemi başarılı");
         }
 
+        // ID'ye göre rezervasyon siler
         [HttpDelete]
         public IActionResult DeleteReservation(int id)
         {
@@ -43,6 +46,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok("Kategori silme işlemi başarılı");
         }
 
+        // ID'ye göre rezervasyon getirir
         [HttpGet("GetReservation")]
         public IActionResult GetReservation(int id)
         {
@@ -50,6 +54,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok(value);
         }
 
+        // Rezervasyonu günceller
         [HttpPut]
         public IActionResult UpdateReservation(UpdateReservationDto updateReservationDto)
         {
@@ -58,6 +63,8 @@ namespace ApiProjeKampi.WebApi.Controllers
             _context.SaveChanges();
             return Ok("Kategori güncelleme işlemi başarılı");
         }
+
+        // Toplam rezervasyon sayısını getirir
         [HttpGet("GetTotalReservationCount")]
         public IActionResult GetTotalReservationCount()
         {
@@ -65,6 +72,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok(value);
         }
 
+        // Tüm rezervasyonlardaki toplam kişi sayısını getirir
         [HttpGet("GetTotalCustomerCount")]
         public IActionResult GetTotalCustomerCount()
         {
@@ -72,6 +80,7 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok(value);
         }
 
+        // Onay bekleyen rezervasyon sayısını getirir
         [HttpGet("GetPendingReservations")]
         public IActionResult GetPendingReservations()
         {
@@ -79,11 +88,45 @@ namespace ApiProjeKampi.WebApi.Controllers
             return Ok(value);
         }
 
+        // Onaylanan rezervasyon sayısını getirir
         [HttpGet("GetApprovedReservations")]
         public IActionResult GetApprovedReservations()
         {
-            var value = _context.Reservations.Where(x => x.ReservationStatus == "Onaylandı").Count();
+            var value = _context.Reservations.Where(x => x.ReservationStatus == "Onaylandi").Count();
             return Ok(value);
+        }
+
+        [HttpGet("GetReservationStats")]
+        public IActionResult GetReservationStats()
+        {
+            DateTime today = DateTime.Today;
+            DateTime fourMonthsAgo = today.AddMonths(-3);
+
+            // 1. SQL tarafında sadece gruplama ve veri çekme
+            var rawData = _context.Reservations
+                .Where(r => r.ReservationDate >= fourMonthsAgo)
+                .GroupBy(r => new { r.ReservationDate.Year, r.ReservationDate.Month })
+                .Select(g => new
+                {
+                    g.Key.Year,
+                    g.Key.Month,
+                    Approved = g.Count(x => x.ReservationStatus == "Onaylandı"),
+                    Pending = g.Count(x => x.ReservationStatus == "Onay Bekliyor"),
+                    Canceled = g.Count(x => x.ReservationStatus == "İptal Edildi")
+                })
+                .OrderBy(x => x.Year).ThenBy(x => x.Month)
+                .ToList(); // Burada SQL biter, veriler RAM’e alınır
+
+            // 2. Bellekte DTO'ya mapleme + tarih formatlama
+            var result = rawData.Select(x => new ReservationChartDto
+            {
+                Month = new DateTime(x.Year, x.Month, 1).ToString("MMM yyyy"),
+                Approved = x.Approved,
+                Pending = x.Pending,
+                Canceled = x.Canceled
+            }).ToList();
+
+            return Ok(result);
         }
     }
 }
