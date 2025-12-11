@@ -1,6 +1,6 @@
-﻿@model CreateImageDto
+﻿@model GetImageByIdDto
 @{
-    ViewData["Title"] = "CreateImage";
+    ViewData["Title"] = "UpdateImage";
     Layout = "~/Views/AdminLayout/Index.cshtml";
 }
 
@@ -11,18 +11,18 @@
             <div class="col-12 col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Görsel Ekleme</h4>
+                        <h4>Fotoğraf Güncelleme</h4>
                     </div>
                     <div class="card-body">
                         <form method="post">
-
+                            <input type="hidden" asp-for="ImageId"/>
                             <label>Görsel Başlıgı</label>
                             <input type="text" asp-for="Title" class="form-control" />
                             <br>
                             <label>Görsel Url</label>
                             <input type="text" asp-for="ImageUrl" class="form-control" />
                             <br>
-                            <button class="btn btn-primary">Görsel Oluştur</button>
+                            <button class="btn btn-success">Görsel Güncelle</button>
                         </form>
                     </div>
                 </div>
@@ -30,4 +30,3 @@
         </div>
     </div>
 </section>
-

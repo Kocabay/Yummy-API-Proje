@@ -25,7 +25,18 @@ namespace ApiProjeKampi.WebUI.Controllers
             }
             return View();
         }
-
+        public async Task<IActionResult> ImageListWithEdit()
+        {
+            var client = _httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync("https://localhost:7177/api/Images");
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultImageDto>>(jsonData);
+                return View(values);
+            }
+            return View();
+        }
         [HttpGet]
         public IActionResult CreateImage()
         {
@@ -41,7 +52,7 @@ namespace ApiProjeKampi.WebUI.Controllers
             var responseMessage = await client.PostAsync("https://localhost:7177/api/Images", stringContent);
             if (responseMessage.IsSuccessStatusCode)
             {
-                return RedirectToAction("ImageList");
+                return RedirectToAction("ImageListWithEdit");
             }
             return View();
         }
