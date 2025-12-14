@@ -228,6 +228,51 @@ namespace ApiProjeKampi.WebApi.Migrations
                     b.ToTable("Features");
                 });
 
+            modelBuilder.Entity("ApiProjeKampi.WebApi.Entities.GroupReservation", b =>
+                {
+                    b.Property<int>("GroupReservationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupReservationId"));
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastProcessDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PersonCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReservationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReservationStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResponsibleCustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GroupReservationId");
+
+                    b.ToTable("GroupReservations");
+                });
+
             modelBuilder.Entity("ApiProjeKampi.WebApi.Entities.Image", b =>
                 {
                     b.Property<int>("ImageId")

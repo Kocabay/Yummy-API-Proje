@@ -110,9 +110,9 @@ namespace ApiProjeKampi.WebApi.Controllers
                 {
                     g.Key.Year,
                     g.Key.Month,
-                    Approved = g.Count(x => x.ReservationStatus == "Onaylandı"),
+                    Approved = g.Count(x => x.ReservationStatus == "Onaylandi"),
                     Pending = g.Count(x => x.ReservationStatus == "Onay Bekliyor"),
-                    Canceled = g.Count(x => x.ReservationStatus == "İptal Edildi")
+                    Canceled = g.Count(x => x.ReservationStatus == "Iptal Edildi")
                 })
                 .OrderBy(x => x.Year).ThenBy(x => x.Month)
                 .ToList(); // Burada SQL biter, veriler RAM’e alınır
